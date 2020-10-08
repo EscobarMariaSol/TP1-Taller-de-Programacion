@@ -31,7 +31,7 @@ int copiar_en_arreglo_muchas_veces(char *mensaje) {
     if (!arreglo) return 1;
     printf("TAMAÑO INICIAL: %zu\n", arrayGetSize(arreglo));
     printf("POSICIÓN: %d\n", arreglo->pos);
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 12; i++) {
         arrayAdd(arreglo, mensaje, strlen(mensaje));
         printf("TAMAÑO ACTUAL: %zu\n", arrayGetSize(arreglo));
         printf("POSICIÓN: %d\n", arreglo->pos);
@@ -66,6 +66,20 @@ int copiar_en_arreglo_y_limpiar_muchas_veces(char *mensaje) {
         printf("TAMAÑO ACTUAL: %zu\n", arrayGetSize(arreglo));
         printf("POSICIÓN: %d\n", arreglo->pos);
         if (arrayClear(arreglo)) return 1;
+    }
+    arrayDestroy(arreglo);
+    return 0;
+}
+
+int copiar_en_arreglo_y_recorrer(char *mensaje) {
+    array_t* arreglo = arrayCreate(0);
+    if(!arreglo) return 1;
+    arrayAdd(arreglo, mensaje, strlen(mensaje));
+    printf("TAMAÑO FINAL: %zu\n", arrayGetSize(arreglo));
+    printf("POSICIÓN: %d\n", arreglo->pos);
+    if (arrayGetSize(arreglo) > 0) printf("MENSAJE: %s\n", (char*)arrayGetContent(arreglo));
+    for (int i = 0; i < arrayGetSize(arreglo); i++) {
+        printf("POSICIÓN: %d CARACTER: %c\n", i, arrayGetElement(arreglo, i));
     }
     arrayDestroy(arreglo);
     return 0;
@@ -106,6 +120,9 @@ int main(int argc, char *argv[]) {
     printf("RESPUESTA COPIAR Y LIMPIAR: %d\n", resp);
     printf("*********************COPIAR Y LIMPIAR MUCHAS VECES*************************\n");
     resp = copiar_en_arreglo_y_limpiar_muchas_veces("Hola Mundo!");
-    printf("RESPUESTA COPIAR Y LIMPIAR: %d\n", resp);
+    printf("RESPUESTA COPIAR Y LIMPIAR MUCHAS VECES: %d\n", resp);
+    printf("*********************COPIAR EN ARREGLO Y RECORRER*************************\n");
+    resp = copiar_en_arreglo_y_recorrer("Hello!");
+    printf("RESPUESTA COPIAR en arreglo y recorrer: %d\n", resp);
     return resp;
 }

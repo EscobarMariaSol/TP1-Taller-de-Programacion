@@ -28,6 +28,9 @@ int arrayClear(array_t *self);
 // Devuelve el contenido dentro del arreglo
 char *arrayGetContent(array_t *self);
 
+// Devuelve el caracter que se encuentra en la posición pos
+char arrayGetElement(array_t *self, size_t pos);
+
 // Devuelve el largo del arreglo
 size_t arrayGetSize(array_t *self);
 

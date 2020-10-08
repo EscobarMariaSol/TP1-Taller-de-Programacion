@@ -26,7 +26,7 @@ int arrayAdd(array_t *self, const char *msg, size_t len) {
     if ((self->pos + len) > self->size) {
         int new_size = (self->pos + len) + 1;
         char* new_buffer = realloc(self->buffer, new_size);
-        if (!new_buffer) return 1;
+        if (!new_buffer) return -1;
         self->buffer = new_buffer;
         memset(((self->buffer) + self->pos), 0, (len + 1));
         self->size = new_size;
@@ -42,7 +42,7 @@ char *arrayGetContent(array_t *self) {
 
 int arrayClear(array_t *self) {
     void *new_buffer = calloc(sizeof(char), 0);
-    if (!new_buffer) return 1;
+    if (!new_buffer) return -1;
     free(self->buffer);
     arrayInit(self, new_buffer, 0);
     return 0;
@@ -50,6 +50,11 @@ int arrayClear(array_t *self) {
 
 size_t arrayGetSize(array_t *self) {
     return self->size;
+}
+
+char arrayGetElement(array_t *self, size_t index) {
+    if (index <= self->pos) return self->buffer[index];
+    return -1;
 }
 
 void arrayDestroy(array_t *self) {
