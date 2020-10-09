@@ -25,6 +25,3 @@ char cesarEncoderEncode(cesar_encoder_t *self, char element) {
 char cesarEncoderDecode(cesar_encoder_t *self, char element) {
     return cesarEncode((-self->key), element);
 }
-
-// Destruye el encoder que se le pasa por parámetro
-void cesarEncoderDestroy(cesar_encoder_t *self);
