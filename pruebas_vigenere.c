@@ -101,9 +101,6 @@ int main(int argc, char *argv[]) {
     printf("**********************CIFRAR Y DESCIFRAR UN MENSAJE***********************\n");
     resp = cifrar_y_descifrar_mensaje();
     printf("EL ENCODER CIFRÓ Y DESCIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");
-
-    /*printf("**********************CIFRAR Y DESCIFRAR UN CARACTER MUCHAS VECES***********************\n");
-    resp = cifrar_y_descifrar_muchas_veces();
-    printf("EL ENCODER CIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");*/
+    
     return 0;
 }

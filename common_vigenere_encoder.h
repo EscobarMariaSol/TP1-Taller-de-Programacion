@@ -16,7 +16,5 @@ array_t *vigenereEncoderEncode(vigenere_encoder_t *self, array_t *message);
 // Decodifica un mensaje encriptado que se le pasa por parámetro
 array_t *vigenereEncoderDecode(vigenere_encoder_t *self, array_t *message);
 
-// Destruye el encoder que se le pasa por parámetro
-void vigenereEncoderDestroy(vigenere_encoder_t *self);
 
 #endif //COMMON_VIGENERE_ENCODER_H
