@@ -8,9 +8,14 @@ int vigenereEncoder(vigenere_encoder_t *vigenere, array_t *message, array_t *new
         char aux = (arrayGetElement(message, i) + (code * vigenere->key[j])) % 256;
         if (arrayAdd(new_message, &aux, 1) < 0) return -1;
         j++;
-        if (j == strlen(vigenere->key)) j = 0; 
+         
     }
     return 0;
+}
+
+void incrementPos(vigenere_encoder_t *encoder) {
+    encoder->key_pos++;
+    if (encoder->key_pos == strlen(encoder->key)) encoder->key_pos = 0;
 }
 
 /************************Primitivas del encoder***********************/
@@ -18,26 +23,20 @@ int vigenereEncoder(vigenere_encoder_t *vigenere, array_t *message, array_t *new
 int vigenereEncoderCreate(vigenere_encoder_t *encoder, char *key) {
     memset(encoder, 0, sizeof(vigenere_encoder_t));
     encoder->key = key;
+    encoder->key_pos = 0;
     return 0;
 }
 
-array_t *vigenereEncoderEncode(vigenere_encoder_t *self, array_t *message) {
-    array_t *new_array = arrayCreate(arrayGetSize(message));
-    if (!new_array) return NULL;
-    if (vigenereEncoder(self, message, new_array, 1) < 0) {
-        arrayDestroy(new_array);
-        return NULL;
-    }
-    return new_array;
+unsigned char vigenereEncoderEncode(vigenere_encoder_t *self, unsigned char element) {
+    unsigned char aux = (element + self->key[self->key_pos]) % 256;
+    incrementPos(self);
+    return aux;
 }
 
 
-array_t *vigenereEncoderDecode(vigenere_encoder_t *self, array_t *message) {
-    array_t *new_array = arrayCreate(arrayGetSize(message));
-    if (!new_array) return NULL;
-    if (vigenereEncoder(self, message, new_array, -1) < 0) {
-        arrayDestroy(new_array);
-        return NULL;
-    }
-    return new_array;
+unsigned char vigenereEncoderDecode(vigenere_encoder_t *self, unsigned char element) {
+    unsigned char aux = (element - self->key[self->key_pos]) % 256;
+    incrementPos(self);
+    return aux;
+    
 }

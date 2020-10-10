@@ -8,7 +8,7 @@ int crear_cesar_encoder(uint32_t clave) {
     return 0;
 }
 
-int cifrar_caracter(uint32_t clave, char caracter) {
+int cifrar_caracter(uint32_t clave, unsigned char caracter) {
     cesar_encoder_t encoder;
     if (cesarEncoderCreate(&encoder, clave) < 0) 
         return 1;

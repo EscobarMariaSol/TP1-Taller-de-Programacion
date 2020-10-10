@@ -35,15 +35,6 @@ int rc4EncoderCreate(rc4_encoder_t *encoder, unsigned char *key){
     return 0;
 }
 
-array_t *rc4EncoderEncode(rc4_encoder_t *self, array_t *message) {
-    array_t *new_message = arrayCreate(arrayGetSize(message));
-    if (!new_message) return NULL;
-    for (int i = 0; i < arrayGetSize(message); i++) {
-        char aux = arrayGetElement(message, i) ^ rc4Randomize(self);
-        if (arrayAdd(new_message, &aux, 1) < 0) {
-            arrayDestroy(new_message);
-            return NULL;
-        }
-    }
-    return new_message;
+unsigned char rc4EncoderEncode(rc4_encoder_t *self, unsigned char element) {
+    return (element ^ rc4Randomize(self));
 }
