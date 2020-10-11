@@ -16,12 +16,10 @@ int cesarEncoderCreate(cesar_encoder_t *encoder, uint32_t key) {
     return 0;
 }
 
-// Codifica el mensaje que se le pasa por parámetro
 unsigned char cesarEncoderEncode(cesar_encoder_t *self, unsigned char element) {
     return cesarEncode(self->key, element);
 }
 
-// Decodifica un mensaje encriptado que se le pasa por parámetro
 unsigned char cesarEncoderDecode(cesar_encoder_t *self, unsigned char element) {
     return cesarEncode((-self->key), element);
 }

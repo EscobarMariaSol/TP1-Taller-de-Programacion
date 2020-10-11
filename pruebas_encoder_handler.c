@@ -109,45 +109,173 @@ int cifrar_mensaje_rc4() {
     return !esta_ok;
 }
 
-/*int cifrar_y_descifrar_mensaje(void) {
-    char *clave = "SecureKey";
-    char *message = "Secret Message";
-    vigenere_encoder_t encoder;
-    if (vigenereEncoderCreate(&encoder, clave) < 0) 
+int cifrar_y_descifrar_mensaje_cesar(void) {
+    char *message = "Mensaje secreto";
+    int key = 3;
+    uint32_t codigo_esperado[] = {0x50, 0x68, 0x71, 0x76, 0x64, 0x6d,
+            0x68, 0x23, 0x76, 0x68, 0x66, 0x75, 0x68, 0x77, 0x72};
+    encoder_handler_t handler;
+    if (encoderHandlerCreate(&handler, "Cesar", &key) < 0) 
         return 1;
+    printf("TIPO COINCIDE: %s\n", (strcmp(handler.type, "Cesar") == 0) ? "OK" : "FALLÓ");
     array_t *arreglo = arrayCreate(strlen(message));
-    if (!arreglo) 
-        return 1;
+    if (!arreglo) return 1;
     if (arrayAdd(arreglo, message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
-    printf("CLAVE COINCIDE: %s\n", (encoder.key == clave) ? "OK" : "FALLÓ");
-    array_t *codificado = vigenereEncoderEncode(&encoder, arreglo);
+    array_t *cifrado = encoderHandlerEncode(&handler, arreglo);
+    if (!cifrado) {
+        arrayDestroy(arreglo);
+        return 1;
+    }
+    
+    bool esta_ok = true;
+    for (int i = 0; i < strlen(message); i++) {
+        if (arrayGetElement(cifrado, i) != ((char) codigo_esperado[i])) {
+            esta_ok = false;
+            break;
+        } 
+    }
+    encoder_handler_t handler2;
+    if (encoderHandlerCreate(&handler2, "Cesar", &key) < 0) {
+        arrayDestroy(arreglo);
+        arrayDestroy(cifrado);
+        return 1;
+    }
+    array_t *descifrado = encoderHandlerDecode(&handler2, cifrado);
+    if (!descifrado) {
+        arrayDestroy(arreglo);
+        arrayDestroy(cifrado);
+        return 1;
+    }
+
+    for (int i = 0; i < strlen(message); i++) {
+        if (arrayGetElement(descifrado, i) != ((char) message[i])) {
+            esta_ok = false;
+            break;
+        } 
+    }
+    arrayDestroy(arreglo);
+    arrayDestroy(cifrado);
+    arrayDestroy(descifrado);
+    return !esta_ok;
+}
+
+int cifrar_y_descifrar_mensaje_vigenere(void) {
+    char *clave = "Secreta";
+    char *message = "Mensaje Privado";
+    uint32_t codigo_esperado[] = {
+        ('S' + 'M'), ('e' + 'e'), ('c' + 'n'), ('r' + 's'), ('e' + 'a'),
+        ('t' + 'j'), ('a' + 'e'), ('S' + ' '), ('e' + 'P'), ('c' + 'r'), 
+        ('r' + 'i'), ('e' + 'v'), ('t' + 'a'), ('a' + 'd'), ('S' + 'o')};
+    encoder_handler_t handler;
+
+    if (encoderHandlerCreate(&handler, "vigenerE", clave) < 0) return 1;
+    printf("TIPO COINCIDE: %s\n", (strcmp(handler.type, "vigenerE") == 0) ? "OK" : "FALLÓ");
+    array_t *arreglo = arrayCreate(strlen(message));
+    if (!arreglo) return 1;
+    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+        arrayDestroy(arreglo);
+        return 1;
+    }
+    array_t *codificado = encoderHandlerEncode(&handler, arreglo);
     printf("EL MENSAJE SE CODIFICÓ: %s\n", (codificado != NULL) ? "OK" : "FALLÓ"); 
     if (!codificado) {
         arrayDestroy(arreglo);
         return 1;
     }
-    array_t *decodificado = vigenereEncoderDecode(&encoder, codificado);
-    if (!decodificado) {
-        arrayDestroy(arreglo);
-        arrayDestroy(codificado);
-        return 1;
-    }
     bool esta_ok = true;
     for (int i = 0; i < 14; i++) {
-        if (arrayGetElement(decodificado, i) != message[i]) {
+        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
     }
-    printf("MENSAJE DECODIFICADO COINCIDE CON LO ESPERADO: %s\n", (esta_ok) ? "OK" : "FALLÓ");
-    arrayDestroy(decodificado);
-    arrayDestroy(codificado);
+    printf("MENSAJE CODIFICADO COINCIDE CON LO ESPERADO: %s\n", (esta_ok) ? "OK" : "FALLÓ");
+    
+    encoder_handler_t handler2;
+    if (encoderHandlerCreate(&handler2, "VigenErE", clave) < 0) {
+        arrayDestroy(arreglo);
+        arrayDestroy(codificado);
+        return 1;
+    }
+    array_t *descifrado = encoderHandlerDecode(&handler2, codificado);
+    if (!descifrado) {
+        arrayDestroy(arreglo);
+        arrayDestroy(codificado);
+        return 1;
+    }
+
+    for (int i = 0; i < strlen(message); i++) {
+        if (arrayGetElement(descifrado, i) != ((char) message[i])) {
+            esta_ok = false;
+            break;
+        } 
+    }
     arrayDestroy(arreglo);
+    arrayDestroy(codificado);
+    arrayDestroy(descifrado);
     return !esta_ok;
-}*/
+}
+
+int cifrar_y_descifrar_mensaje_rc4() {
+    char *clave = "Cervantes";
+    char *message = "En un lugar de la mancha";
+    uint32_t codigo_esperado[] = {0x6D, 0x11, 0xFB, 0x9B, 0x96, 0x4C, 0xA1,
+            0xFC, 0xD6, 0x80, 0xA5, 0x8C, 0xB5, 0x7D, 0xC2, 0x0A, 0x28, 0x07, 0x94,
+            0x1C, 0x01, 0xF9, 0xC7, 0xA3};
+    encoder_handler_t handler;
+
+    if (encoderHandlerCreate(&handler, "RC4", clave) < 0) return 1;
+   
+    printf("TIPO COINCIDE: %s\n", (strcmp(handler.type, "RC4") == 0) ? "OK" : "FALLÓ");
+   
+    array_t *arreglo = arrayCreate(strlen(message));
+    if (!arreglo) return 1;
+    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+        arrayDestroy(arreglo);
+        return 1;
+    }
+    array_t *codificado = encoderHandlerEncode(&handler, arreglo);
+    printf("EL MENSAJE SE CODIFICÓ: %s\n", (codificado != NULL) ? "OK" : "FALLÓ"); 
+    if (!codificado) {
+        arrayDestroy(arreglo);
+        return 1;
+    }
+    
+    bool esta_ok = true;
+    for (int i = 0; i < 9; i++) {
+        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+            esta_ok = false;
+            break;
+        } 
+    }
+    printf("MENSAJE CODIFICADO COINCIDE CON LO ESPERADO: %s\n", (esta_ok) ? "OK" : "FALLÓ");
+    encoder_handler_t handler2;
+    if (encoderHandlerCreate(&handler2, "Rc4", clave) < 0) {
+        arrayDestroy(arreglo);
+        arrayDestroy(codificado);
+        return 1;
+    }
+    array_t *descifrado = encoderHandlerDecode(&handler2, codificado);
+    if (!descifrado) {
+        arrayDestroy(arreglo);
+        arrayDestroy(codificado);
+        return 1;
+    }
+
+    for (int i = 0; i < strlen(message); i++) {
+        if (arrayGetElement(descifrado, i) != ((char) message[i])) {
+            esta_ok = false;
+            break;
+        } 
+    }
+    arrayDestroy(arreglo);
+    arrayDestroy(codificado);
+    arrayDestroy(descifrado);
+    return !esta_ok;
+}
 
 int main(int argc, char *argv[]) {
     int resp = 1;
@@ -166,6 +294,10 @@ int main(int argc, char *argv[]) {
     resp = crear_handler("rc4", "key");
     printf("EL ENCODER SE CREO: %s\n", (resp == 0) ? "OK" : "FALLÓ");
 
+    printf("**********************CREAR UN HANDLER CON ENCODER ERRONEO***********************\n");
+    resp = crear_handler("Casa", "key");
+    printf("EL ENCODER NO SE CREO: %s\n", (resp) ? "OK" : "FALLÓ");
+
     printf("**********************CIFRAR UN MENSAJE CESAR********************************\n");
     resp = cifrar_mensaje_cesar();
     printf("EL ENCODER CIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");
@@ -178,9 +310,17 @@ int main(int argc, char *argv[]) {
     resp = cifrar_mensaje_rc4();
     printf("EL ENCODER CIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");
     
-    /*printf("**********************CIFRAR Y DESCIFRAR UN MENSAJE***********************\n");
-    resp = cifrar_y_descifrar_mensaje();
-    printf("EL ENCODER CIFRÓ Y DESCIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");*/
+    printf("**********************CIFRAR Y DESCIFRAR UN MENSAJE CESAR***********************\n");
+    resp = cifrar_y_descifrar_mensaje_cesar();
+    printf("EL ENCODER CIFRÓ Y DESCIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");
+    
+    printf("**********************CIFRAR Y DESCIFRAR UN MENSAJE VIGENERE***********************\n");
+    resp = cifrar_y_descifrar_mensaje_vigenere();
+    printf("EL ENCODER CIFRÓ Y DESCIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");
+    
+    printf("**********************CIFRAR Y DESCIFRAR UN MENSAJE RC4***********************\n");
+    resp = cifrar_y_descifrar_mensaje_rc4();
+    printf("EL ENCODER CIFRÓ Y DESCIFRÓ CORRECTAMENTE: %s\n", (resp == 0) ? "OK" : "FALLÓ");
     
     return 0;
 }
