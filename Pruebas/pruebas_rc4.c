@@ -21,7 +21,7 @@ int cifrar_mensaje(void) {
     
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -33,7 +33,7 @@ int cifrar_mensaje(void) {
     }
     
     for (int i = 0; i < arrayGetSize(arreglo); i++) {
-        char aux = rc4EncoderEncode(&encoder, (unsigned char) arrayGetElement(arreglo, i));
+        unsigned char aux = rc4EncoderEncode(&encoder, (unsigned char) arrayGetElement(arreglo, i));
         printf("CODIGO ESPERADO: %x, CODIGO RECIBIDO: %x\n", codigo_esperado[i], aux);
         if (arrayAdd(codificado, &aux, 1) < 0) {
             arrayDestroy(arreglo);
@@ -44,7 +44,7 @@ int cifrar_mensaje(void) {
 
     bool esta_ok = true;
     for (int i = 0; i < 9; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+        if (arrayGetElement(codificado, i) != ((unsigned char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
@@ -67,7 +67,7 @@ int cifrar_y_descifrar_mensaje(void) {
         ((encoder.stream != NULL) && (encoder.i == 0) && (encoder.j == 0))? "OK" : "FALLÓ");
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -78,7 +78,7 @@ int cifrar_y_descifrar_mensaje(void) {
     }
     
     for (int i = 0; i < arrayGetSize(arreglo); i++) {
-        char aux = rc4EncoderEncode(&encoder, arrayGetElement(arreglo, i));
+        unsigned char aux = rc4EncoderEncode(&encoder, arrayGetElement(arreglo, i));
         if (arrayAdd(codificado, &aux, 1) < 0) {
             arrayDestroy(arreglo);
             arrayDestroy(codificado);
@@ -88,8 +88,9 @@ int cifrar_y_descifrar_mensaje(void) {
 
     bool esta_ok = true;
     for (int i = 0; i < 9; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
-            return 1;
+        if (arrayGetElement(codificado, i) != (( unsigned char) codigo_esperado[i])) {
+            esta_ok = false;
+            break;
         } 
     }
     printf("MENSAJE CODIFICADO COINCIDE CON LO ESPERADO: %s\n", (esta_ok) ? "OK" : "FALLÓ");
@@ -105,7 +106,7 @@ int cifrar_y_descifrar_mensaje(void) {
     
     for (int i = 0; i < arrayGetSize(codificado); i++) {
         unsigned char aux = rc4EncoderEncode(&encoder2, arrayGetElement(codificado, i));
-        if (arrayAdd(decodificado, (char*) &aux, 1) < 0) {
+        if (arrayAdd(decodificado, &aux, 1) < 0) {
             arrayDestroy(arreglo);
             arrayDestroy(codificado);
             arrayDestroy(decodificado);
@@ -114,7 +115,7 @@ int cifrar_y_descifrar_mensaje(void) {
     }
 
     for (int i = 0; i < 9; i++) {
-        if (arrayGetElement(decodificado, i) != ((char) message[i])) {
+        if (arrayGetElement(decodificado, i) != ((unsigned char) message[i])) {
             esta_ok = false;
             break;
         } 

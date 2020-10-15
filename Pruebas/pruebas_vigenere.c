@@ -22,7 +22,7 @@ int cifrar_mensaje(void) {
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) 
         return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -35,7 +35,7 @@ int cifrar_mensaje(void) {
     }
     
     for (int i = 0; i < arrayGetSize(arreglo); i++) {
-        char aux = vigenereEncoderEncode(&encoder, (unsigned char) arrayGetElement(arreglo, i));
+        unsigned char aux = vigenereEncoderEncode(&encoder, (unsigned char) arrayGetElement(arreglo, i));
         if (arrayAdd(codificado, &aux, 1) < 0) {
             arrayDestroy(arreglo);
             arrayDestroy(codificado);
@@ -45,7 +45,7 @@ int cifrar_mensaje(void) {
 
     bool esta_ok = true;
     for (int i = 0; i < 14; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+        if (arrayGetElement(codificado, i) != ((unsigned char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
@@ -71,7 +71,7 @@ int cifrar_y_descifrar_mensaje(void) {
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) 
         return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -84,7 +84,7 @@ int cifrar_y_descifrar_mensaje(void) {
     }
     
     for (int i = 0; i < arrayGetSize(arreglo); i++) {
-        char aux = vigenereEncoderEncode(&encoder, (unsigned char) arrayGetElement(arreglo, i));
+        unsigned char aux = vigenereEncoderEncode(&encoder, (unsigned char) arrayGetElement(arreglo, i));
         if (arrayAdd(codificado, &aux, 1) < 0) {
             arrayDestroy(arreglo);
             arrayDestroy(codificado);
@@ -94,7 +94,7 @@ int cifrar_y_descifrar_mensaje(void) {
 
     bool esta_ok = true;
     for (int i = 0; i < 14; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+        if (arrayGetElement(codificado, i) != ((unsigned char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
@@ -115,7 +115,7 @@ int cifrar_y_descifrar_mensaje(void) {
         }
         
         for (int i = 0; i < arrayGetSize(arreglo); i++) {
-            char aux = vigenereEncoderDecode(&encoder2, (unsigned char) arrayGetElement(codificado, i));
+            unsigned char aux = vigenereEncoderDecode(&encoder2, (unsigned char) arrayGetElement(codificado, i));
             if (arrayAdd(decodificado, &aux, 1) < 0) {
                 arrayDestroy(arreglo);
                 arrayDestroy(codificado);
@@ -124,7 +124,7 @@ int cifrar_y_descifrar_mensaje(void) {
             }
         }
         for (int i = 0; i < 14; i++) {
-            if (arrayGetElement(decodificado, i) != ((char) message[i])) {
+            if (arrayGetElement(decodificado, i) != ((unsigned char) message[i])) {
                 esta_ok = false;
                 break;
             } 

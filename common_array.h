@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 typedef struct {
-    char *buffer;
+    unsigned char *buffer;
     size_t size;
     uint32_t pos;
 }array_t;
@@ -20,16 +20,16 @@ typedef struct {
 array_t* arrayCreate(size_t size);
 
 // Copia un mensaje al final del arreglo
-int arrayAdd(array_t *self, const char *msg, size_t len);
+int arrayAdd(array_t *self, const unsigned char *msg, size_t len);
 
 // Limpia el contenido del arreglo
 int arrayClear(array_t *self);
 
 // Devuelve el contenido dentro del arreglo
-char *arrayGetContent(array_t *self);
+unsigned char *arrayGetContent(array_t *self);
 
 // Devuelve el caracter que se encuentra en la posición pos
-char arrayGetElement(array_t *self, size_t pos);
+unsigned char arrayGetElement(array_t *self, size_t pos);
 
 // Devuelve el largo del arreglo
 size_t arrayGetSize(array_t *self);

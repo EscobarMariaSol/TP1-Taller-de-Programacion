@@ -17,20 +17,22 @@ int usar_input_handler(char *ruta, char *contenido_esperado) {
     if (inputOutputHandlerCreate(&handler, ruta) < 0) return -1;
     if ((ruta == NULL) && (handler.file != stdin)) return -1;
 
-    array_t *array_contenido = inputOutputHandlerGetContent(&handler);
+    array_t *array_contenido = inputOutputHandlerGetMessage(&handler);
     if (!array_contenido) {
-        printf("CONTENIDO: Falla\n");
         inputOutputHandlerDestroy(&handler);
         return -1;
     }
-    if (strcmp(contenido_esperado, arrayGetContent(array_contenido)) != 0) {
-        inputOutputHandlerDestroy(&handler);
-        arrayDestroy(array_contenido);
-        return -1;
+    bool esta_ok = true;
+    for (int i = 0; i < arrayGetSize(array_contenido); i++){
+        if (arrayGetElement(array_contenido, i) != (unsigned char) contenido_esperado[i]) {
+            esta_ok = false;
+            break;
+        }
     }
+    printf("MENSAJE RECIBIDO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
     arrayDestroy(array_contenido);
     inputOutputHandlerDestroy(&handler);
-    return 0;
+    return !esta_ok;
 }
 
 int usar_output_handler(char *ruta, char *contenido) {
@@ -41,16 +43,15 @@ int usar_output_handler(char *ruta, char *contenido) {
 
     array_t *array_contenido = arrayCreate(strlen(contenido));
     if (!array_contenido) {
-        printf("CONTENIDO: Falla\n");
         inputOutputHandlerDestroy(&handler);
         return -1;
     }
-    if (arrayAdd(array_contenido, contenido, strlen(contenido)) < 0) {
+    if (arrayAdd(array_contenido, (unsigned char*) contenido, strlen(contenido)) < 0) {
         inputOutputHandlerDestroy(&handler);
         arrayDestroy(array_contenido);
         return -1;
     }
-    if (inputOutputHandlerSetContent(&handler, array_contenido) < 0) {
+    if (inputOutputHandlerSetMessage(&handler, array_contenido) < 0) {
         inputOutputHandlerDestroy(&handler);
         arrayDestroy(array_contenido);
         return -1;

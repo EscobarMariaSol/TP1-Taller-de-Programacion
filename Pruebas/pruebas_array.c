@@ -18,10 +18,19 @@ int copiar_en_arreglo(char *mensaje) {
     if(!arreglo) return 1;
     printf("TAMAÑO INICIAL: %zu\n", arrayGetSize(arreglo));
     printf("POSICIÓN: %d\n", arreglo->pos);
-    arrayAdd(arreglo, mensaje, strlen(mensaje));
+    arrayAdd(arreglo, (unsigned char*) mensaje, strlen(mensaje));
     printf("TAMAÑO FINAL: %zu\n", arrayGetSize(arreglo));
     printf("POSICIÓN: %d\n", arreglo->pos);
-    if (arrayGetSize(arreglo) > 0) printf("MENSAJE: %s\n", (char*)arrayGetContent(arreglo));
+    if (arrayGetSize(arreglo) > 0) {
+        bool esta_ok = true;
+        for (int i = 0; i < arrayGetSize(arreglo); i++){
+            if (arrayGetElement(arreglo, i) != mensaje[i]) {
+                esta_ok = false;
+                break;
+            }
+        }
+        printf("MENSAJE COPIADO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
+    }
     arrayDestroy(arreglo);
     return 0;
 }
@@ -32,11 +41,21 @@ int copiar_en_arreglo_muchas_veces(char *mensaje) {
     printf("TAMAÑO INICIAL: %zu\n", arrayGetSize(arreglo));
     printf("POSICIÓN: %d\n", arreglo->pos);
     for (int i = 0; i < 12; i++) {
-        arrayAdd(arreglo, mensaje, strlen(mensaje));
+        arrayAdd(arreglo, (unsigned char*) mensaje, strlen(mensaje));
         printf("TAMAÑO ACTUAL: %zu\n", arrayGetSize(arreglo));
         printf("POSICIÓN: %d\n", arreglo->pos);
     }
-    printf("MENSAJE: %s\n", (char*)arrayGetContent(arreglo));
+    bool esta_ok = true;
+    int j = 0;
+    for (int i = 0; i < arrayGetSize(arreglo); i++){
+        if (arrayGetElement(arreglo, i) != mensaje[i]) {
+            esta_ok = false;
+            break;
+        }
+        j++;
+        if (j == strlen(mensaje)) j = 0;
+    }
+    printf("MENSAJE COPIADO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
     arrayDestroy(arreglo);
     return 0;
 }
@@ -46,9 +65,17 @@ int copiar_en_arreglo_y_limpiar(char *mensaje) {
     if (!arreglo) return 1;
     printf("TAMAÑO INICIAL: %zu\n", arrayGetSize(arreglo));
     printf("POSICIÓN: %d\n", arreglo->pos);
-    arrayAdd(arreglo, mensaje, strlen(mensaje));
-    printf("MENSAJE COPIADO: %s\n", (char*)arrayGetContent(arreglo));
+    arrayAdd(arreglo, (unsigned char*) mensaje, strlen(mensaje));
+    bool esta_ok = true;
+    for (int i = 0; i < arrayGetSize(arreglo); i++){
+        if (arrayGetElement(arreglo, i) != mensaje[i]) {
+            esta_ok = false;
+            break;
+        }
+    }
+    printf("MENSAJE COPIADO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
     if (arrayClear(arreglo)) return 1;
+    printf("MENSAJE LIMPIADO OK: %s\n", (arrayGetSize(arreglo) == 0) ? "OK" : "FALLÓ");
     printf("TAMAÑO FINAL: %zu\n", arrayGetSize(arreglo));
     printf("POSICIÓN: %d\n", arreglo->pos);
     arrayDestroy(arreglo);
@@ -61,11 +88,19 @@ int copiar_en_arreglo_y_limpiar_muchas_veces(char *mensaje) {
     for (int i = 0; i < 5; i++) {
         printf("TAMAÑO INICIAL: %zu\n", arrayGetSize(arreglo));
         printf("POSICIÓN: %d\n", arreglo->pos);
-        arrayAdd(arreglo, mensaje, strlen(mensaje));
-        printf("MENSAJE COPIADO: %s\n", (char*)arrayGetContent(arreglo));
+        arrayAdd(arreglo, (unsigned char*) mensaje, strlen(mensaje));
+        bool esta_ok = true;
+        for (int i = 0; i < arrayGetSize(arreglo); i++){
+            if (arrayGetElement(arreglo, i) != mensaje[i]) {
+                esta_ok = false;
+                break;
+            }
+        }
+        printf("MENSAJE COPIADO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
         printf("TAMAÑO ACTUAL: %zu\n", arrayGetSize(arreglo));
         printf("POSICIÓN: %d\n", arreglo->pos);
-        if (arrayClear(arreglo)) return 1;
+        if (arrayClear(arreglo) < 0) return 1;
+        printf("MENSAJE LIMPIADO OK: %s\n", (arrayGetSize(arreglo) == 0) ? "OK" : "FALLÓ");
     }
     arrayDestroy(arreglo);
     return 0;
@@ -74,10 +109,19 @@ int copiar_en_arreglo_y_limpiar_muchas_veces(char *mensaje) {
 int copiar_en_arreglo_y_recorrer(char *mensaje) {
     array_t* arreglo = arrayCreate(0);
     if(!arreglo) return 1;
-    arrayAdd(arreglo, mensaje, strlen(mensaje));
+    arrayAdd(arreglo, (unsigned char*) mensaje, strlen(mensaje));
     printf("TAMAÑO FINAL: %zu\n", arrayGetSize(arreglo));
     printf("POSICIÓN: %d\n", arreglo->pos);
-    if (arrayGetSize(arreglo) > 0) printf("MENSAJE: %s\n", (char*)arrayGetContent(arreglo));
+    if (arrayGetSize(arreglo) > 0) {
+        bool esta_ok = true;
+        for (int i = 0; i < arrayGetSize(arreglo); i++){
+            if (arrayGetElement(arreglo, i) != mensaje[i]) {
+                esta_ok = false;
+                break;
+            }
+        }
+        printf("MENSAJE COPIADO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
+    }
     for (int i = 0; i < arrayGetSize(arreglo); i++) {
         printf("POSICIÓN: %d CARACTER: %c\n", i, arrayGetElement(arreglo, i));
     }

@@ -1,6 +1,6 @@
 #include "common_encoder_handler.h"
 
-int crear_handler(const char *tipo, void *clave) {
+int crear_handler(const char *tipo, char *clave) {
     encoder_handler_t handler;
     if (encoderHandlerCreate(&handler, tipo, clave) < 0) 
         return 1;
@@ -10,15 +10,15 @@ int crear_handler(const char *tipo, void *clave) {
 
 int cifrar_mensaje_cesar(void) {
     char *message = "Pan";
-    int key = 5;
+    char *key = "5";
     uint32_t codigo_esperado[] = {0x55, 0x66, 0x73};
     encoder_handler_t handler;
-    if (encoderHandlerCreate(&handler, "Cesar", &key) < 0) 
+    if (encoderHandlerCreate(&handler, "Cesar", key) < 0) 
         return 1;
     printf("TIPO COINCIDE: %s\n", (strcmp(handler.type, "Cesar") == 0) ? "OK" : "FALLÓ");
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -50,7 +50,7 @@ int cifrar_mensaje_vigenere(void) {
     printf("TIPO COINCIDE: %s\n", (strcmp(handler.type, "vigenerE") == 0) ? "OK" : "FALLÓ");
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -62,7 +62,7 @@ int cifrar_mensaje_vigenere(void) {
     }
     bool esta_ok = true;
     for (int i = 0; i < 14; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+        if (arrayGetElement(codificado, i) != ((unsigned char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
@@ -85,7 +85,7 @@ int cifrar_mensaje_rc4() {
    
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -98,7 +98,7 @@ int cifrar_mensaje_rc4() {
     
     bool esta_ok = true;
     for (int i = 0; i < 9; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+        if (arrayGetElement(codificado, i) != ((unsigned char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
@@ -111,16 +111,16 @@ int cifrar_mensaje_rc4() {
 
 int cifrar_y_descifrar_mensaje_cesar(void) {
     char *message = "Mensaje secreto";
-    int key = 3;
+    char *key = "3";
     uint32_t codigo_esperado[] = {0x50, 0x68, 0x71, 0x76, 0x64, 0x6d,
             0x68, 0x23, 0x76, 0x68, 0x66, 0x75, 0x68, 0x77, 0x72};
     encoder_handler_t handler;
-    if (encoderHandlerCreate(&handler, "Cesar", &key) < 0) 
+    if (encoderHandlerCreate(&handler, "Cesar", key) < 0) 
         return 1;
     printf("TIPO COINCIDE: %s\n", (strcmp(handler.type, "Cesar") == 0) ? "OK" : "FALLÓ");
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -138,7 +138,7 @@ int cifrar_y_descifrar_mensaje_cesar(void) {
         } 
     }
     encoder_handler_t handler2;
-    if (encoderHandlerCreate(&handler2, "Cesar", &key) < 0) {
+    if (encoderHandlerCreate(&handler2, "Cesar", key) < 0) {
         arrayDestroy(arreglo);
         arrayDestroy(cifrado);
         return 1;
@@ -175,7 +175,7 @@ int cifrar_y_descifrar_mensaje_vigenere(void) {
     printf("TIPO COINCIDE: %s\n", (strcmp(handler.type, "vigenerE") == 0) ? "OK" : "FALLÓ");
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -187,7 +187,7 @@ int cifrar_y_descifrar_mensaje_vigenere(void) {
     }
     bool esta_ok = true;
     for (int i = 0; i < 14; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+        if (arrayGetElement(codificado, i) != ((unsigned char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
@@ -208,7 +208,7 @@ int cifrar_y_descifrar_mensaje_vigenere(void) {
     }
 
     for (int i = 0; i < strlen(message); i++) {
-        if (arrayGetElement(descifrado, i) != ((char) message[i])) {
+        if (arrayGetElement(descifrado, i) != ((unsigned char) message[i])) {
             esta_ok = false;
             break;
         } 
@@ -233,7 +233,7 @@ int cifrar_y_descifrar_mensaje_rc4() {
    
     array_t *arreglo = arrayCreate(strlen(message));
     if (!arreglo) return 1;
-    if (arrayAdd(arreglo, message, strlen(message)) < 0) {
+    if (arrayAdd(arreglo, (unsigned char*) message, strlen(message)) < 0) {
         arrayDestroy(arreglo);
         return 1;
     }
@@ -246,7 +246,7 @@ int cifrar_y_descifrar_mensaje_rc4() {
     
     bool esta_ok = true;
     for (int i = 0; i < 9; i++) {
-        if (arrayGetElement(codificado, i) != ((char) codigo_esperado[i])) {
+        if (arrayGetElement(codificado, i) != ((unsigned char) codigo_esperado[i])) {
             esta_ok = false;
             break;
         } 
@@ -266,7 +266,7 @@ int cifrar_y_descifrar_mensaje_rc4() {
     }
 
     for (int i = 0; i < strlen(message); i++) {
-        if (arrayGetElement(descifrado, i) != ((char) message[i])) {
+        if (arrayGetElement(descifrado, i) != ((unsigned char) message[i])) {
             esta_ok = false;
             break;
         } 
@@ -282,8 +282,7 @@ int main(int argc, char *argv[]) {
     printf("**********************PRUEBAS HANDLER ENCODER************************\n");
 
     printf("*****************CREAR UN HANDLER CON CESAR ENCODER***********\n");
-    int clave = 5;
-    resp = crear_handler("CESAR", &clave);
+    resp = crear_handler("CESAR", "10");
     printf("EL ENCODER SE CREO: %s\n", (resp == 0) ? "OK" : "FALLÓ");
 
     printf("*****************CREAR UN HANDLER CON VIGENERE ENCODER**************\n");

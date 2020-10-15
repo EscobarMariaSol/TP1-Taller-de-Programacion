@@ -16,7 +16,7 @@ typedef struct {
 
 
 // Crea un manejador según el tipo de método que se quiera utilizar para codificar;
-int encoderHandlerCreate(encoder_handler_t *handler, const char *type, void *key);
+int encoderHandlerCreate(encoder_handler_t *handler, const char *type, const char *key);
 
 // Codifica un mensaje de acuerdo al método que se le haya indicado
 array_t *encoderHandlerEncode(encoder_handler_t *self, array_t *message);
