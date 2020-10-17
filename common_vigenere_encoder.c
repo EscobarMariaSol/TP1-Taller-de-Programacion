@@ -29,5 +29,4 @@ unsigned char vigenereEncoderDecode(vigenere_encoder_t *self,
     unsigned char aux = (element - self->key[self->key_pos]) % 256;
     incrementPos(self);
     return aux;
-    
 }

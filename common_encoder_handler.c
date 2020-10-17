@@ -96,6 +96,5 @@ array_t *encoderHandlerDecode(encoder_handler_t *self, array_t *msg) {
     return codingHandler(self, msg, encoderDecode);
 }
 
-void encoderHandlerDestroy(encoder_handler_t *self) {
-    
+void encoderHandlerDestroy(encoder_handler_t *self) { 
 }

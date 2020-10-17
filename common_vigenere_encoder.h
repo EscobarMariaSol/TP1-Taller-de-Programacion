@@ -19,5 +19,4 @@ unsigned char vigenereEncoderEncode(vigenere_encoder_t *self,
 unsigned char vigenereEncoderDecode(vigenere_encoder_t *self, 
                                     unsigned char element);
 
-
 #endif //COMMON_VIGENERE_ENCODER_H

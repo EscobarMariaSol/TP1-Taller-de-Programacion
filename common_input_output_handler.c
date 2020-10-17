@@ -37,6 +37,6 @@ int ioHandlerSetMessage(io_handler_t * self, array_t *message) {
 }
 
 void ioHandlerDestroy(io_handler_t * self) {
-    if((self->file != stdin) && (self->file != stdout)) 
+    if ((self->file != stdin) && (self->file != stdout)) 
 		fclose(self->file);
 }

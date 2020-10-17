@@ -75,7 +75,8 @@ int findConnection(struct addrinfo *addrs, int *skt_fd) {
 		*skt_fd = socket(aux->ai_family, aux->ai_socktype, aux->ai_protocol);
 		if (*skt_fd < 0) continue;
 		if (connect(*skt_fd, aux->ai_addr, aux->ai_addrlen) > -1) break;
-		else close(*skt_fd);
+		else 
+			close(*skt_fd);
 	}
 	if (!aux) return -1;
 	return 0;

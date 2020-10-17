@@ -40,5 +40,4 @@ int clientSendMessage(client_t *self);
 // Post: se destruyó el cliente y se liberaron los recursos utilizados
 void clientFinish(client_t *self);
 
-
 #endif //CLIENT_H

@@ -12,7 +12,7 @@ int recibir_mensaje_cesar(void) {
     server_t servidor;
     if (serverStart(&servidor, "8081", "--method=cesAr", "--key=5") < 0)
         return -1;
-    if (serverAcceptClient(&servidor) < 0) {
+    if (serverAccept(&servidor) < 0) {
         serverFinish(&servidor);
         return -1;
     }
@@ -28,7 +28,7 @@ int recibir_mensaje_vigenere() {
     server_t servidor;
     if (serverStart(&servidor, "8082", "--method=viGenere", "--key=SecureKey") < 0)
         return -1;
-    if (serverAcceptClient(&servidor) < 0) {
+    if (serverAccept(&servidor) < 0) {
         serverFinish(&servidor);
         return -1;
     }
@@ -44,7 +44,7 @@ int recibir_mensaje_rc4() {
     server_t servidor;
     if (serverStart(&servidor, "8083", "--method=RC4", "--key=Hi") < 0)
         return -1;
-    if (serverAcceptClient(&servidor) < 0) {
+    if (serverAccept(&servidor) < 0) {
         serverFinish(&servidor);
         return -1;
     }

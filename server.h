@@ -47,5 +47,4 @@ int serverReceiveMessage(server_t *self);
 // Post: se destruyó el servidor y se liberaron los recursos utilizados
 void serverFinish(server_t *self);
 
-
 #endif //SERVER_H
