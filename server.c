@@ -33,6 +33,18 @@ int showMessage(array_t *message) {
 
 /************************Primitivas del TDA Server****************************/
 
+int serverRun(const char *port, const char *method, const char *key) {
+    server_t server;
+    if (serverStart(&server, port, method, key) < 0)
+        return -1;
+    if ((serverAcceptClient(&server) < 0) || (serverReceiveMessage(&server) < 0)) {
+        serverFinish(&server);
+        return -1;
+    }
+    serverFinish(&server);
+    return 0;
+}
+
 int serverStart(server_t *server, const char *port, const char *method, const char *key) {
     memset(server, 0, sizeof(server_t));
     if (socketCreate(&server->self_socket, NULL, port, 1)) return -1;

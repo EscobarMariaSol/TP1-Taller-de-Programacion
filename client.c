@@ -28,6 +28,18 @@ int sendMessage(socket_t *socket, array_t *message) {
 
 /************************Primitivas del TDA Client****************************/
 
+int clientRun(const char *host, const char *port, const char *method, const char *key) {
+    client_t client;
+    if (clientStart(&client, host, port, method, key) < 0)
+        return -1;
+    if (clientSendMessage(&client) < 0) {
+        clientFinish(&client);
+        return -1;
+    }
+    clientFinish(&client);
+    return 0;
+}
+
 int clientStart(client_t *client, const char *host, const char *port, const char *method, const char *key) {
     memset(client, 0, sizeof(client_t));
     if (socketCreate(&client->socket, host, port, 0)) return -1;
