@@ -40,14 +40,6 @@ unsigned char *arrayGetContent(array_t *self) {
     return self->buffer;
 }
 
-int arrayClear(array_t *self) {
-    void *new_buffer = calloc(sizeof(char), 0);
-    if (!new_buffer) return -1;
-    free(self->buffer);
-    arrayInit(self, new_buffer, 0);
-    return 0;
-}
-
 size_t arrayGetSize(array_t *self) {
     return self->size;
 }

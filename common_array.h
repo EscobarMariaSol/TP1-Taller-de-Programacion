@@ -22,9 +22,6 @@ array_t* arrayCreate(size_t size);
 // Copia un mensaje al final del arreglo
 int arrayAdd(array_t *self, const unsigned char *msg, size_t len);
 
-// Limpia el contenido del arreglo
-int arrayClear(array_t *self);
-
 // Devuelve el contenido dentro del arreglo
 unsigned char *arrayGetContent(array_t *self);
 

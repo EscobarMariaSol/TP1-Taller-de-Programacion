@@ -17,12 +17,11 @@ int inputOutputHandlerCreate(input_output_handler_t *handler, const char *path) 
 }
 
 array_t *inputOutputHandlerGetMessage(input_output_handler_t * self) {
-	int  buff_len;
     array_t *contenido = arrayCreate(0);
     if (!contenido) return NULL;
 	char buffer[BUFFER_TAM] = {0};
 	while (fgets(buffer, BUFFER_TAM, self->file)) {
-		buff_len = strlen(buffer);
+		int buff_len = strlen(buffer);
 		if(arrayAdd(contenido, (unsigned char*) buffer, buff_len) < 0) return NULL;
 		memset(buffer, 0, BUFFER_TAM);
 	}	

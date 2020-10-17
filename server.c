@@ -7,7 +7,7 @@
 /************************Funciones Auxiliares*********************************/
 
 array_t *ReceiveMessage(socket_t *socket) {
-    int recv = 0, total_recv = 0;
+    int recv = 0;
     unsigned char buffer[BUFFER_TAM] = {0};
     array_t *recv_msg = arrayCreate(0);
     if (!recv_msg) return NULL;
@@ -17,7 +17,6 @@ array_t *ReceiveMessage(socket_t *socket) {
 			arrayDestroy(recv_msg);
 			return NULL;
 		}
-		total_recv += recv;
 		memset(buffer, 0, BUFFER_TAM);	
 	} while (recv > 0);
     return recv_msg;

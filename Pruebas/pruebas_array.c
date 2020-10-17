@@ -60,52 +60,6 @@ int copiar_en_arreglo_muchas_veces(char *mensaje) {
     return 0;
 }
 
-int copiar_en_arreglo_y_limpiar(char *mensaje) {
-    array_t* arreglo = arrayCreate(0);
-    if (!arreglo) return 1;
-    printf("TAMAÑO INICIAL: %zu\n", arrayGetSize(arreglo));
-    printf("POSICIÓN: %d\n", arreglo->pos);
-    arrayAdd(arreglo, (unsigned char*) mensaje, strlen(mensaje));
-    bool esta_ok = true;
-    for (int i = 0; i < arrayGetSize(arreglo); i++){
-        if (arrayGetElement(arreglo, i) != mensaje[i]) {
-            esta_ok = false;
-            break;
-        }
-    }
-    printf("MENSAJE COPIADO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
-    if (arrayClear(arreglo)) return 1;
-    printf("MENSAJE LIMPIADO OK: %s\n", (arrayGetSize(arreglo) == 0) ? "OK" : "FALLÓ");
-    printf("TAMAÑO FINAL: %zu\n", arrayGetSize(arreglo));
-    printf("POSICIÓN: %d\n", arreglo->pos);
-    arrayDestroy(arreglo);
-    return 0;
-}
-
-int copiar_en_arreglo_y_limpiar_muchas_veces(char *mensaje) {
-    array_t* arreglo = arrayCreate(0);
-    if (!arreglo) return 1;
-    for (int i = 0; i < 5; i++) {
-        printf("TAMAÑO INICIAL: %zu\n", arrayGetSize(arreglo));
-        printf("POSICIÓN: %d\n", arreglo->pos);
-        arrayAdd(arreglo, (unsigned char*) mensaje, strlen(mensaje));
-        bool esta_ok = true;
-        for (int i = 0; i < arrayGetSize(arreglo); i++){
-            if (arrayGetElement(arreglo, i) != mensaje[i]) {
-                esta_ok = false;
-                break;
-            }
-        }
-        printf("MENSAJE COPIADO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
-        printf("TAMAÑO ACTUAL: %zu\n", arrayGetSize(arreglo));
-        printf("POSICIÓN: %d\n", arreglo->pos);
-        if (arrayClear(arreglo) < 0) return 1;
-        printf("MENSAJE LIMPIADO OK: %s\n", (arrayGetSize(arreglo) == 0) ? "OK" : "FALLÓ");
-    }
-    arrayDestroy(arreglo);
-    return 0;
-}
-
 int copiar_en_arreglo_y_recorrer(char *mensaje) {
     array_t* arreglo = arrayCreate(0);
     if(!arreglo) return 1;
@@ -159,12 +113,6 @@ int main(int argc, char *argv[]) {
     printf("*********************COPIAR MUCHOS MENSAJES************************\n");
     resp = copiar_en_arreglo_muchas_veces("HOLA_");
     printf("RESPUESTA COPIAR ALGO MUY LARGO EN MUCHAS REPETICIONES: %d\n", resp);
-    printf("**************************COPIAR Y LIMPIAR*************************\n");
-    resp = copiar_en_arreglo_y_limpiar("Hola Mundo!");
-    printf("RESPUESTA COPIAR Y LIMPIAR: %d\n", resp);
-    printf("*********************COPIAR Y LIMPIAR MUCHAS VECES*****************\n");
-    resp = copiar_en_arreglo_y_limpiar_muchas_veces("Hola Mundo!");
-    printf("RESPUESTA COPIAR Y LIMPIAR MUCHAS VECES: %d\n", resp);
     printf("*********************COPIAR EN ARREGLO Y RECORRER******************\n");
     resp = copiar_en_arreglo_y_recorrer("Hello!");
     printf("RESPUESTA COPIAR en arreglo y recorrer: %d\n", resp);
