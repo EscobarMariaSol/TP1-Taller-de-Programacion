@@ -8,30 +8,30 @@ void swap(unsigned char *stream, unsigned int i, unsigned int j) {
     stream[j] = aux;
 }
 
-void rc4Init(rc4_encoder_t *encoder, unsigned char *key) {
+void rc4Init(rc4_encoder_t *rc4, unsigned char *key) {
     int i, j;
     for (i = 0; i < 256; i++)
-        encoder->stream[i] = i;
+        rc4->stream[i] = i;
     for (i = j = 0; i < 256; i++) {
-        j = (j + key[i % (strlen((char*)key))] + encoder->stream[i]) & 255;
-        swap(encoder->stream, i, j);
+        j = (j + key[i % (strlen((char*)key))] + rc4->stream[i]) & 255;
+        swap(rc4->stream, i, j);
     }
 }
 
-unsigned char rc4Randomize(rc4_encoder_t *encoder) {
-    encoder->i = (encoder->i + 1) & 255;
-    encoder->j = (encoder->j + encoder->stream[encoder->i]) & 255;
-    swap(encoder->stream, encoder->i, encoder->j);
-    return encoder->stream[(encoder->stream[encoder->i] + encoder->stream[encoder->j]) & 255];
+unsigned char rc4Randomize(rc4_encoder_t *rc4) {
+    rc4->i = (rc4->i + 1) & 255;
+    rc4->j = (rc4->j + rc4->stream[rc4->i]) & 255;
+    swap(rc4->stream, rc4->i, rc4->j);
+    return rc4->stream[(rc4->stream[rc4->i] + rc4->stream[rc4->j]) & 255];
 }
 
-/************************Primitivas del encoder***********************/
+/************************Primitivas del rc4***********************/
 
-int rc4EncoderCreate(rc4_encoder_t *encoder, unsigned char *key){
-    memset(encoder, 0, sizeof(rc4_encoder_t));
-    rc4Init(encoder, key);
-    encoder->i = 0;
-    encoder->j = 0;
+int rc4EncoderCreate(rc4_encoder_t *rc4, unsigned char *key){
+    memset(rc4, 0, sizeof(rc4_encoder_t));
+    rc4Init(rc4, key);
+    rc4->i = 0;
+    rc4->j = 0;
     return 0;
 }
 

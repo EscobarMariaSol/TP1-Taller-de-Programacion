@@ -27,14 +27,15 @@ int serverRun(const char *port, const char *method, const char *key);
 // Pre: recibe un puntero a server_t, una dirección de host, un puerto
 // un método de cifrado y una clave válida que utilizará el método
 // Post: devuelve -1 en caso de error o 0 en caso de éxito.
-int serverStart(server_t *server, const char *port, const char *method, const char *key);
+int serverStart(server_t *server, 
+				const char *port, const char *method, const char *key);
 
 // Acepta un cliente, que se encuentra en espera por conectarse,
 // estableciendo un canal de comunicación entre ellos.
 // Pre: recibe un puntero a un server_t válido
 // Post: el servidor acepta un cliente y establece el canal de
 // comunicación devolviendo 0 en caso de éxito o -1 en caso de error.
-int serverAcceptClient(server_t *server);
+int serverAccept(server_t *server);
 
 // Recibe un mensaje cifrado de un cliente al cual está conectado
 // Pre: recibe un puntero a un servidor creado

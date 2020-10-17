@@ -42,34 +42,34 @@ int setEncoder(encoder_handler_t *handler, const char *type, const char *key) {
     return -1;
 }
 
-unsigned char encoderEncode(encoder_handler_t *handler, unsigned char element) {
+unsigned char encoderEncode(encoder_handler_t *handler, unsigned char elem) {
     if (isCesar(handler->type)) {
-        return cesarEncoderEncode(&handler->cesar_encoder, element);
+        return cesarEncoderEncode(&handler->cesar_encoder, elem);
     } else if (isVigenere(handler->type)) {
-        return vigenereEncoderEncode(&handler->vigenere_encoder, element);
+        return vigenereEncoderEncode(&handler->vigenere_encoder, elem);
     } else if (isRc4(handler->type)) {
-        return rc4EncoderEncode(&handler->rc4_encoder, element);
+        return rc4EncoderEncode(&handler->rc4_encoder, elem);
     } 
     return -1;
 }
 
-unsigned char encoderDecode(encoder_handler_t *handler, unsigned char element) {
+unsigned char encoderDecode(encoder_handler_t *handler, unsigned char elem) {
     if (isCesar(handler->type)) {
-        return cesarEncoderDecode(&handler->cesar_encoder, element);
+        return cesarEncoderDecode(&handler->cesar_encoder, elem);
     } else if (isVigenere(handler->type)) {
-        return vigenereEncoderDecode(&handler->vigenere_encoder, element);
+        return vigenereEncoderDecode(&handler->vigenere_encoder, elem);
     } else if (isRc4(handler->type)) {
-        return rc4EncoderEncode(&handler->rc4_encoder, element);
+        return rc4EncoderEncode(&handler->rc4_encoder, elem);
     } 
     return -1;
 }
 
-array_t *codingHandler(encoder_handler_t *handler, array_t *message, 
-    unsigned char (*encodeDecode)(encoder_handler_t *handler, unsigned char element)) {
-    array_t *new_message = arrayCreate(arrayGetSize(message));
+array_t *codingHandler(encoder_handler_t *handler, array_t *msg, unsigned char 
+        (*encodeDecode)(encoder_handler_t *handler, unsigned char elem)) {
+    array_t *new_message = arrayCreate(arrayGetSize(msg));
     if (!new_message) return NULL;
-    for (int i = 0; i < arrayGetSize(message); i++) {
-        unsigned char aux = encodeDecode(handler, arrayGetElement(message, i));
+    for (int i = 0; i < arrayGetSize(msg); i++) {
+        unsigned char aux = encodeDecode(handler, arrayGetElement(msg, i));
         if (arrayAdd(new_message, &aux, 1) < 0) {
             arrayDestroy(new_message);
             return NULL;
@@ -80,19 +80,20 @@ array_t *codingHandler(encoder_handler_t *handler, array_t *message,
 
 /************************Primitivas del encoder handler***********************/
 
-int encoderHandlerCreate(encoder_handler_t *handler, const char *type, const char *key) {
+int encoderHandlerCreate(encoder_handler_t *handler, 
+        const char *type, const char *key) {
     memset(handler, 0, sizeof(encoder_handler_t));
     if (setEncoder(handler, type, key) < 0) return -1;
     handler->type = type;
     return 0;
 }
 
-array_t *encoderHandlerEncode(encoder_handler_t *self, array_t *message) {
-    return codingHandler(self, message, encoderEncode);
+array_t *encoderHandlerEncode(encoder_handler_t *self, array_t *msg) {
+    return codingHandler(self, msg, encoderEncode);
 }
 
-array_t *encoderHandlerDecode(encoder_handler_t *self, array_t *message) {
-    return codingHandler(self, message, encoderDecode);
+array_t *encoderHandlerDecode(encoder_handler_t *self, array_t *msg) {
+    return codingHandler(self, msg, encoderDecode);
 }
 
 void encoderHandlerDestroy(encoder_handler_t *self) {

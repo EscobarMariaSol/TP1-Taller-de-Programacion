@@ -12,10 +12,12 @@ typedef struct {
 int vigenereEncoderCreate(vigenere_encoder_t *encoder, char *key);
 
 // Codifica el mensaje que se le pasa por parámetro
-unsigned char vigenereEncoderEncode(vigenere_encoder_t *self, unsigned char element);
+unsigned char vigenereEncoderEncode(vigenere_encoder_t *self, 
+                                    unsigned char element);
 
 // Decodifica un mensaje encriptado que se le pasa por parámetro
-unsigned char vigenereEncoderDecode(vigenere_encoder_t *self, unsigned char element);
+unsigned char vigenereEncoderDecode(vigenere_encoder_t *self, 
+                                    unsigned char element);
 
 
 #endif //COMMON_VIGENERE_ENCODER_H

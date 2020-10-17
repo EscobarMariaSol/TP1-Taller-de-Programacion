@@ -1,25 +1,25 @@
 #include "common_input_output_handler.h"
 
 int crear_input_output_handler(char *ruta) {
-    input_output_handler_t handler;
-    if (inputOutputHandlerCreate(&handler, ruta) < 0) return -1;
+    io_handler_t handler;
+    if (ioHandlerCreate(&handler, ruta) < 0) return -1;
     else if ((ruta == NULL) && (handler.file != stdin)) {
-        inputOutputHandlerDestroy(&handler); 
+        ioHandlerDestroy(&handler); 
         return -1;
     }
-    inputOutputHandlerDestroy(&handler);
+    ioHandlerDestroy(&handler);
     return 0;
 }
 
 int usar_input_handler(char *ruta, char *contenido_esperado) {
-    input_output_handler_t handler;
+    io_handler_t handler;
     
-    if (inputOutputHandlerCreate(&handler, ruta) < 0) return -1;
+    if (ioHandlerCreate(&handler, ruta) < 0) return -1;
     if ((ruta == NULL) && (handler.file != stdin)) return -1;
 
-    array_t *array_contenido = inputOutputHandlerGetMessage(&handler);
+    array_t *array_contenido = ioHandlerGetMessage(&handler);
     if (!array_contenido) {
-        inputOutputHandlerDestroy(&handler);
+        ioHandlerDestroy(&handler);
         return -1;
     }
     bool esta_ok = true;
@@ -31,33 +31,33 @@ int usar_input_handler(char *ruta, char *contenido_esperado) {
     }
     printf("MENSAJE RECIBIDO OK: %s\n", (esta_ok) ? "OK" : "FALLÓ");
     arrayDestroy(array_contenido);
-    inputOutputHandlerDestroy(&handler);
+    ioHandlerDestroy(&handler);
     return !esta_ok;
 }
 
 int usar_output_handler(char *ruta, char *contenido) {
-    input_output_handler_t handler;
+    io_handler_t handler;
     
-    if (inputOutputHandlerCreate(&handler, ruta) < 0) return -1;
+    if (ioHandlerCreate(&handler, ruta) < 0) return -1;
     if ((ruta == NULL) && (handler.file != stdin)) return -1;
 
     array_t *array_contenido = arrayCreate(strlen(contenido));
     if (!array_contenido) {
-        inputOutputHandlerDestroy(&handler);
+        ioHandlerDestroy(&handler);
         return -1;
     }
     if (arrayAdd(array_contenido, (unsigned char*) contenido, strlen(contenido)) < 0) {
-        inputOutputHandlerDestroy(&handler);
+        ioHandlerDestroy(&handler);
         arrayDestroy(array_contenido);
         return -1;
     }
-    if (inputOutputHandlerSetMessage(&handler, array_contenido) < 0) {
-        inputOutputHandlerDestroy(&handler);
+    if (ioHandlerSetMessage(&handler, array_contenido) < 0) {
+        ioHandlerDestroy(&handler);
         arrayDestroy(array_contenido);
         return -1;
     }
     arrayDestroy(array_contenido);
-    inputOutputHandlerDestroy(&handler);
+    ioHandlerDestroy(&handler);
     return 0;
 }
 

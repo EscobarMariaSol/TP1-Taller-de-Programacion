@@ -23,7 +23,8 @@ typedef struct {
 // Pre: Recibe un puntero a socket_t, un nombre de host, un puerto
 // y el tipo de socket, 0 para cliente y 1 para server
 // Post: devuleve -1 en caso de error o 0 en caso de éxito
-int socketCreate(socket_t* socket, const char* host, const char* port, uint16_t type);
+int socketCreate(socket_t* socket, const char* host, 
+					const char* port, uint16_t type);
 
 // Crea el socket aceptador en representación de la conexión establecida
 // Pre: Recibe un puntero al socket conectado y otro a un nuevo socket

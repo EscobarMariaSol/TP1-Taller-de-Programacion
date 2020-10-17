@@ -5,18 +5,18 @@
 
 typedef struct {
     FILE *file;
-}input_output_handler_t;
+}io_handler_t;
 
 // Crea un nuevo manejador de archivo
-int inputOutputHandlerCreate(input_output_handler_t *handler, const char *path);
+int ioHandlerCreate(io_handler_t *handler, const char *path);
 
 // Devuleve el contenido de entrada
-array_t *inputOutputHandlerGetMessage(input_output_handler_t * self);
+array_t *ioHandlerGetMessage(io_handler_t * self);
 
 // Setea  el contenido de salida
-int inputOutputHandlerSetMessage(input_output_handler_t * self, array_t *message);
+int ioHandlerSetMessage(io_handler_t * self, array_t *message);
 
 // Destruye el manejador de archivo que se le pasa por parámetro
-void inputOutputHandlerDestroy(input_output_handler_t * self);
+void ioHandlerDestroy(io_handler_t * self);
 
 #endif //COMMON_INPUT_OUTPUT_HANDLER_H

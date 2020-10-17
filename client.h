@@ -19,13 +19,15 @@ typedef struct {
 // clave indicadas por parámetro.
 // Pre: recibe un hostname, puerto, métod de cifrado y clave válidos.
 // Post: devuelve 0 al finalizar la ejecución.
-int clientRun(const char *host, const char *port, const char *method, const char *key);
+int clientRun(const char *host, const char *port, 
+				const char *method, const char *key);
 
 // Devuelve un cliente conectado al host y puerto indicado
 // Pre: recibe un puntero a client_t, una dirección de host, un puerto
 // un método de cifrado y la clave para cifrar
 // Post: devuelve -1 en caso de error o 0 en caso de éxito.
-int clientStart(client_t *client, const char *host, const char *port, const char *method, const char *key);
+int clientStart(client_t *client, const char *host, 
+				const char *port, const char *method, const char *key);
 
 // Envia un mensaje al servidor al cuál está conectado el cliente 
 // El mensaje a enviar se recibe por entrada estádar

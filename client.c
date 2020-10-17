@@ -6,10 +6,10 @@
 /************************Funciones Auxiliares*********************************/
 
 array_t *getMessage(void) {
-    input_output_handler_t io_handler;
-    if (inputOutputHandlerCreate(&io_handler, NULL)) return NULL;
-    array_t *message = inputOutputHandlerGetMessage(&io_handler);
-    inputOutputHandlerDestroy(&io_handler);
+    io_handler_t io_handler;
+    if (ioHandlerCreate(&io_handler, NULL)) return NULL;
+    array_t *message = ioHandlerGetMessage(&io_handler);
+    ioHandlerDestroy(&io_handler);
     return message;
 }
 
@@ -28,7 +28,8 @@ int sendMessage(socket_t *socket, array_t *message) {
 
 /************************Primitivas del TDA Client****************************/
 
-int clientRun(const char *host, const char *port, const char *method, const char *key) {
+int clientRun(const char *host, const char *port, 
+                const char *method, const char *key) {
     client_t client;
     if (clientStart(&client, host, port, method, key) < 0)
         return -1;
@@ -40,10 +41,13 @@ int clientRun(const char *host, const char *port, const char *method, const char
     return 0;
 }
 
-int clientStart(client_t *client, const char *host, const char *port, const char *method, const char *key) {
+int clientStart(client_t *client, const char *host, 
+                const char *port, const char *method, const char *key) {
     memset(client, 0, sizeof(client_t));
     if (socketCreate(&client->socket, host, port, 0)) return -1;
-    if (encoderHandlerCreate(&client->encoder, (&method[LEN_METHOD]), (char *)(&key[LEN_KEY]))) {
+    if (encoderHandlerCreate(&client->encoder, 
+                            (&method[LEN_METHOD]), 
+                            (char *)(&key[LEN_KEY]))) {
         socketDestroy(&client->socket);
         return -1;
     }

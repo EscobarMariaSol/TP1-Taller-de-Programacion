@@ -2,9 +2,9 @@
 
 /*********Funciones auxiliares************/
 
-char cesarEncode(uint32_t key, char element) {
+char cesarEncode(uint32_t key, char elem) {
     char aux;
-    aux = (char) (((uint32_t) element) + key);
+    aux = (char) (((uint32_t) elem) + key);
     return (aux % 256);
 }
 
@@ -16,10 +16,10 @@ int cesarEncoderCreate(cesar_encoder_t *encoder, uint32_t key) {
     return 0;
 }
 
-unsigned char cesarEncoderEncode(cesar_encoder_t *self, unsigned char element) {
-    return cesarEncode(self->key, element);
+unsigned char cesarEncoderEncode(cesar_encoder_t *self, unsigned char elem) {
+    return cesarEncode(self->key, elem);
 }
 
-unsigned char cesarEncoderDecode(cesar_encoder_t *self, unsigned char element) {
-    return cesarEncode((-self->key), element);
+unsigned char cesarEncoderDecode(cesar_encoder_t *self, unsigned char elem) {
+    return cesarEncode((-self->key), elem);
 }

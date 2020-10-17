@@ -23,10 +23,10 @@ array_t *ReceiveMessage(socket_t *socket) {
 }
 
 int showMessage(array_t *message) {
-    input_output_handler_t io_handler;
-    if (inputOutputHandlerCreate(&io_handler, NULL)) return -1;
-    int resp = inputOutputHandlerSetMessage(&io_handler, message);
-    inputOutputHandlerDestroy(&io_handler);
+    io_handler_t io_handler;
+    if (ioHandlerCreate(&io_handler, NULL)) return -1;
+    int resp = ioHandlerSetMessage(&io_handler, message);
+    ioHandlerDestroy(&io_handler);
     return resp;
 }
 
@@ -36,7 +36,7 @@ int serverRun(const char *port, const char *method, const char *key) {
     server_t server;
     if (serverStart(&server, port, method, key) < 0)
         return -1;
-    if ((serverAcceptClient(&server) < 0) || (serverReceiveMessage(&server) < 0)) {
+    if ((serverAccept(&server) < 0) || (serverReceiveMessage(&server) < 0)) {
         serverFinish(&server);
         return -1;
     }
@@ -44,17 +44,20 @@ int serverRun(const char *port, const char *method, const char *key) {
     return 0;
 }
 
-int serverStart(server_t *server, const char *port, const char *method, const char *key) {
+int serverStart(server_t *server, const char *port, 
+                    const char *method, const char *key) {
     memset(server, 0, sizeof(server_t));
     if (socketCreate(&server->self_socket, NULL, port, 1)) return -1;
-    if (encoderHandlerCreate(&server->encoder, (&method[LEN_METHOD]), (char *)(&key[LEN_KEY]))) {
+    if (encoderHandlerCreate(&server->encoder, 
+                            (&method[LEN_METHOD]), 
+                            (char *)(&key[LEN_KEY]))) {
         socketDestroy(&server->self_socket);
         return -1;
     }
     return 0;
 }
 
-int serverAcceptClient(server_t *self) {
+int serverAccept(server_t *self) {
     return socketAccept(&self->self_socket, &self->accept_socket);
 }
 
