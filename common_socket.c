@@ -16,7 +16,7 @@ int callGetAddrInfo(socket_t* socket, struct addrinfo **addr, const char* host, 
 	struct addrinfo hints;
 	struct addrinfo *address;
 	initAddrinfo(&hints, flag);
-	if (getaddrinfo(NULL, port, &hints, &address) != 0) return -1;
+	if (getaddrinfo(host, port, &hints, &address) != 0) return -1;
 	*addr = address;
 	return 0;
 }
@@ -61,6 +61,7 @@ int initServerSocket(socket_t* self, const char* host, const char* port) {
 		freeaddrinfo(addr);
 		return -1;
 	}
+	freeaddrinfo(addr);
 	return 0;
 }
 
@@ -87,6 +88,7 @@ int connectAddress(socket_t* client_socket, struct addrinfo *addr) {
 
 int initClientSocket(socket_t *client_socket, const char *host, const char *port) {
 	struct addrinfo *addr;
+	if (!host && !port) return 0; //socket aceptador
 	if (callGetAddrInfo(client_socket, &addr, host, port, 0) < 0) return -1;
 	if (connectAddress(client_socket, addr) < 0) {
 		freeaddrinfo(addr);
@@ -111,8 +113,7 @@ int socketCreate(socket_t* socket, const char* host, const char* port, uint16_t 
 }
 
 int socketAccept(socket_t* self, socket_t* accept_socket) {
-	int fd;
-	fd = accept(self->fd, NULL, NULL);
+	int fd = accept(self->fd, NULL, NULL);
 	if (fd < 0) return -1;
 	if (socketCreate(accept_socket, NULL, NULL, 0) < 0) {
 		close(fd);
