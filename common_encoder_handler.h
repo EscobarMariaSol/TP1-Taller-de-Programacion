@@ -7,6 +7,11 @@
 #include "common_vigenere_encoder.h"
 #include "common_rc4_encoder.h"
 
+// Estructura del manejador de cifradores
+// Cuenta con atributos como el tipo de cifrador que se utilizará
+// a la hora de realizar la codificación y decodificación de mensajes 
+// además de contar con un atributo con cada tipo de encoder, en el cual
+// almacenará el encoder utilizado o NULL en caso de los no utilizados.
 typedef struct {
     cesar_encoder_t cesar_encoder;
     vigenere_encoder_t vigenere_encoder;

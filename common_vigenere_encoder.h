@@ -3,6 +3,11 @@
 
 #include "common_array.h"
 
+// Estructura del codificador Vigenere
+// Cuenta con atributos como la clave (key) y la 
+// posición actual de la clave en la que se encuentra (key_pos)
+// de esta manera se puede codificar o decodificar un mensaje completo, 
+// llamando al método del encoder las veces que sean necesarias.
 typedef struct {
     char *key;
     int key_pos;

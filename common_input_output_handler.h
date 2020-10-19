@@ -3,6 +3,9 @@
 
 #include "common_array.h"
 
+// Estructura del manejador de Entrada y Salida
+// Cuenta con un único atributo correspondiente al file en el cual
+// deberá escribir o leer.
 typedef struct {
     FILE *file;
 }io_handler_t;

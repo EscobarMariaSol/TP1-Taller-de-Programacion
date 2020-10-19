@@ -10,6 +10,10 @@
 #include <netdb.h>
 #include <unistd.h>
 
+// Estructura del array
+// Cuenta con atributos como un buffer que será en el cual se almacenará la 
+// información, el tamaño del buffer y la posición del buffer en la que se 
+// encuentra posicionado.
 typedef struct {
     unsigned char *buffer;
     size_t size;

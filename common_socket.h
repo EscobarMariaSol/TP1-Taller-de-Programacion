@@ -13,6 +13,8 @@
 
 /*******Definición de tipos de datos********/
 
+// Estructura del Socket
+// Cuenta con un único atributo correspondiente a su file descriptor.
 typedef struct {
 	uint16_t fd;
 }socket_t;
