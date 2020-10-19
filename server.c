@@ -6,6 +6,10 @@
 
 /************************Funciones Auxiliares*********************************/
 
+// Recibe un mensaje que es enviado por un cliente, lo almacena en un array_t
+// y luego lo devuelve.
+// Pre: recibe un socket habilitado para la comunicación con el cliente
+// Post: devuelve el mensaje del cliente que se ha recibido
 array_t *ReceiveMessage(socket_t *socket) {
     int recv = 0;
     unsigned char buffer[BUFFER_TAM] = {0};
@@ -22,6 +26,9 @@ array_t *ReceiveMessage(socket_t *socket) {
     return recv_msg;
 }
 
+// Muestra por salida estándar el mensaje que se envía por parámetro
+// Pre: recibe un mensaje dentro de un array_t válido
+// Post: el mensaje ha sido mostrado por salida estándar
 int showMessage(array_t *message) {
     io_handler_t io_handler;
     if (ioHandlerCreate(&io_handler, NULL)) return -1;

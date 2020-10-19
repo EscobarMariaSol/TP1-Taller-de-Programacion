@@ -15,15 +15,16 @@ typedef struct {
 
 /*************************** Declaración de primitivas de Client *************/
 
-// Inicia la ejecución de un servidor, el cual escuchará en el host y puerto
-// indicados y luego recibirá un mensaje de un cliente el cual está codificado,
+// Es la función que se encarga de iniciar la ejecución de un servidor, el 
+// cual escuchará en el host y puerto que se hayan 
+// indicado y luego recibirá un mensaje de un cliente el cual está codificado,
 // luego lo decodificará, utilizando el método y la clave indicadas por
 // parámetro, finalmente mostrará el mensaje por salida estándar.
 // Pre: recibe un hostname, puerto, métod de cifrado y clave válidos.
 // Post: devuelve 0 al finalizar la ejecución.
 int serverRun(const char *port, const char *method, const char *key);
 
-// Devuelve un servidor que escucha en el host y puerto indicado
+// Crea y ejecuta un servidor que escucha en el host y puerto indicado
 // Pre: recibe un puntero a server_t, una dirección de host, un puerto
 // un método de cifrado y una clave válida que utilizará el método
 // Post: devuelve -1 en caso de error o 0 en caso de éxito.

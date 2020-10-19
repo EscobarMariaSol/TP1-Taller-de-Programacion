@@ -2,6 +2,9 @@
 
 /*********Funciones auxiliares************/
 
+// Codifica un byte utilizando la clave que se le pasa por parámetro
+// Pre: recibe una clave númerica válida
+// Post: el byte ha sido codificado
 char cesarEncode(uint32_t key, char elem) {
     char aux;
     aux = (char) (((uint32_t) elem) + key);

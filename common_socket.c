@@ -4,6 +4,11 @@
 /************************Funciones Auxiliares*********************************/
 
 /************************Auxiliares Comúnes***********************************/
+
+// Inicializa un struct addrinfo indicando que se utilizara el canal de 
+// counicación TCP y la familia IPV4
+// Pre: recibe un puntero a un struct addrinfo y un flag
+// Pos: el struct addrinfo se ha inicializado
 void initAddrinfo(struct addrinfo *hints, int flag) {
 	memset(hints, 0, sizeof(struct addrinfo));
 	hints->ai_family = AF_INET;       
@@ -12,6 +17,11 @@ void initAddrinfo(struct addrinfo *hints, int flag) {
 	hints->ai_protocol = 0; 
 }
 
+// Llama a la getaddrinfo obteniendo las direcciones a las cuales se puede
+// conectar, de acuerdo al host y puerto indicados
+// Pre: recibe un puntero a un socket creado, un host y puerto válido y un flag
+// Pos: devuelve 0 si se han podido establece las direcciones para la conexión
+// o -1 en caso de algún error
 int callGetAddrInfo(socket_t* socket, struct addrinfo **addr, 
 					const char* host, const char* port, int flag) {
 	struct addrinfo hints;
@@ -24,11 +34,20 @@ int callGetAddrInfo(socket_t* socket, struct addrinfo **addr,
 
 /************************Auxiliares Servidor**********************************/
 
+// Activa la opcion de reusar la direccion en caso de que esta
+// no este disponible por un TIME_WAIT
+// Pre: recibe un puntero a un socket_t
+// Pos: el socket cuenta con la opción de reutilizar la dirección
 int activeReuseAddr(socket_t* self) {
 	int val = 1;
 	return setsockopt(self->fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
 }
 
+// Asigna el file descriptor al socket que se le pasa por parámetro
+// utilizando la información de la dirección addrs
+// Pre: recibe un puntero a un socket_t y un struct addrinfo válido
+// pos: devuelve 0 si se ha asignado un file descriptor al socket,
+// en caso contrario devuelve -1
 int setFD(socket_t *self, struct addrinfo *addrs) {
 	int skt_fd;
 	skt_fd = socket(addrs->ai_family, addrs->ai_socktype, addrs->ai_protocol);
@@ -38,6 +57,12 @@ int setFD(socket_t *self, struct addrinfo *addrs) {
 	return 0;
 }
 
+// Llama a la función callGetAddrInfo para que setee la dirección
+// en la que escuchará el socket servidor que se pasa por parámetro
+// Pre: recibe un puntero a un socket_t, una estructura para almacenar
+// la dirección, el puerto y un flag
+// Pos: devuelve 0 si la dirección ha sido asignada de manera correcta,
+// en caso contrario devuelve -1
 int setAddrInfo(socket_t* self, struct addrinfo **addr, 
 				const char* port, int flag) {
 	if (callGetAddrInfo(self, addr, NULL, port, flag) < 0) 
@@ -45,6 +70,12 @@ int setAddrInfo(socket_t* self, struct addrinfo **addr,
 	return 0;
 }
 
+// Establece que el servidor está listo para escuchar conexiones
+// y la cantidad de conexiones en espera que se habilitarán
+// Pre: recibe un puntero a un socket_t correspondiente al socket servidor,
+// y la dirección en la cual escuchará
+// Pos: devuelve 0 si el servidor ya está listo para recibir conexiones,
+// o -1 en caso de que haya algún error
 int bindAndListen(socket_t* self, struct addrinfo *addr) {
 	int fd = self->fd;
 	struct addrinfo *aux_addr; 
@@ -55,7 +86,11 @@ int bindAndListen(socket_t* self, struct addrinfo *addr) {
 	return 0;
 }
 
-int initServerSocket(socket_t* self, const char* host, const char* port) {
+// Inicializa un socket_t destinado a ser un socket servidor
+// Pre: recibe un puntero a un socket_t y el puerto 
+// Pos: devuelve 0 si el socket se inicializó correctamente,
+// sino devuelve -1 en caso de cualquier error
+int initServerSocket(socket_t* self, const char* port) {
 	struct addrinfo *addr;
 	if (setAddrInfo(self, &addr, port, AI_PASSIVE) < 0) return -1;
 	if ((setFD(self, addr) < 0) || (bindAndListen(self, addr) < 0)) {
@@ -69,6 +104,12 @@ int initServerSocket(socket_t* self, const char* host, const char* port) {
 
 /************************Auxiliares Cliente***********************************/
 
+// Busca establecer la conexión de un cliente a un servidor, utilizando
+// las direcciones que se le pasan por parámetro
+// Pre: recibe una lista de direcciones válidas y un puntero donde
+// almacenar el file descriptor a través del cual se establecerá la conexión
+// Pos: devuelve 0 en caso de que se haya establecido la conexión,
+// si ocurrió algún error devuelve -1
 int findConnection(struct addrinfo *addrs, int *skt_fd) {
 	struct addrinfo *aux;
 	for (aux = addrs; aux; aux = aux->ai_next) {
@@ -82,6 +123,10 @@ int findConnection(struct addrinfo *addrs, int *skt_fd) {
 	return 0;
 }
 
+// Llama a la función encargada de establecer la conexión con el servidor
+// Pre: recibe un puntero a un socket_t que es el cliente y la lista de
+// direcciones disponibles
+// Pos: devuelve 0 si la conexión se estableció, -1 en caso contrario
 int connectAddress(socket_t* client_socket, struct addrinfo *addr) {
 	int socket_fd;
 	if (findConnection(addr, &socket_fd) < 0) return -1;
@@ -89,6 +134,11 @@ int connectAddress(socket_t* client_socket, struct addrinfo *addr) {
 	return 0;
 }
 
+// Inicializa un socket_t destinado a ser un socket cliente
+// Pre: recibe un puntero a un socket_t , el host y el puerto 
+// al cual se quiere conectar
+// Pos: devuelve 0 si el socket se inicializó correctamente,
+// sino devuelve -1 en caso de cualquier error
 int initClientSocket(socket_t *client_socket, 
 						const char *host, const char *port) {
 	struct addrinfo *addr;
@@ -108,7 +158,7 @@ int socketCreate(socket_t* socket, const char* host,
 					const char* port, uint16_t type) {
     memset(socket, 0, sizeof(socket_t));
     if (type == 1) {
-		if (initServerSocket(socket, host, port) < 0) return -1;
+		if (initServerSocket(socket, port) < 0) return -1;
 	} else if (type == 0) {
 		if (initClientSocket(socket, host, port) < 0) return -1;
 	} else { // cualquier otro tipo => tipo incorrecto

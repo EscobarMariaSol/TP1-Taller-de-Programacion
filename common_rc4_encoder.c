@@ -2,12 +2,19 @@
 
 /************************Funciones auxiliares*************************/
 
+// Intercambia 2 valores que se encuentran dentro de un stream de datos
+// Pre: recibe un puntero a un stream de datos y dos posiciones válidas
+// Pos: los valores de las posiciones indicadas han sido intercambiados
 void swap(unsigned char *stream, unsigned int i, unsigned int j) {
     unsigned char aux = stream[i];
     stream[i] = stream[j];
     stream[j] = aux;
 }
 
+// Inicializa el encoder que utiliza como método de codificación el 
+// método RC4, utilizando la clave que se le pasa por parametro
+// Pre: recibe un puntero a un rc4_encoder_t y una clave numérica
+// Pos: el encoder ha sido inicializado adecuadamente
 void rc4Init(rc4_encoder_t *rc4, unsigned char *key) {
     int i, j;
     for (i = 0; i < 256; i++)
@@ -18,6 +25,10 @@ void rc4Init(rc4_encoder_t *rc4, unsigned char *key) {
     }
 }
 
+// Genera un valor random utilizando la información del encoder 
+// que se le ha pasado por parámetro
+// Pre: recibe un puntero a un rc4_encoder_t creado
+// Pos: devuelve un valor aleatorio
 unsigned char rc4Randomize(rc4_encoder_t *rc4) {
     rc4->i = (rc4->i + 1) & 255;
     rc4->j = (rc4->j + rc4->stream[rc4->i]) & 255;

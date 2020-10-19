@@ -2,6 +2,10 @@
 
 /*********Funciones Auxiliares**********/
 
+// Inicializa los atributos del array que recibe por parámetro con 
+// los datos que se le pasan por parámetros
+// Pre: el espacio para el array y el buffer ya han sido reservados
+// Post: los datos dentro del array han sido inicializados
 void arrayInit(array_t *array, unsigned char *buffer, size_t size) {
     array->buffer = buffer;
     array->pos = 0;

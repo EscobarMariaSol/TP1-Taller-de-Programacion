@@ -2,6 +2,10 @@
 
 /************************Funciones auxiliares***********************/
 
+// Se encarga de incrementar la posición de la clave en la que se 
+// encuentra el encoder.
+// Pre: recibe un puntero a un vigenere_encoder_tcreado
+// Pos: la posición ha sido incrementada en uno
 void incrementPos(vigenere_encoder_t *encoder) {
     encoder->key_pos++;
     if (encoder->key_pos == strlen(encoder->key)) encoder->key_pos = 0;
