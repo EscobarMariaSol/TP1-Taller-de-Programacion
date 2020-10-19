@@ -7,6 +7,10 @@
 
 /************************* Definicion de tipos de datos **********************/
 
+// Estructura del cliente
+// Cuenta con atributos como el socket, encargado de establecer la 
+// comunicación con el servidor, y el encoder, que codificará el 
+// mensaje que se enviará al servidor.
 typedef struct {
 	socket_t socket;
 	encoder_handler_t encoder;

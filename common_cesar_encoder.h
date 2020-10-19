@@ -10,6 +10,9 @@
 #include <netdb.h>
 #include <unistd.h>
 
+// Estructura del codificador Cesar
+// Cuenta con un único atributo que corresponde a la clave que se 
+// utiliza a la hora de codificar un byte.
 typedef struct {
     uint32_t key;
 }cesar_encoder_t;

@@ -7,6 +7,11 @@
 
 /************************* Definicion de tipos de datos **********************/
 
+// Estructura del servidor
+// Cuenta con atributos como el socket, desde el cual estará
+// disponible para la conexión con el cliente, el socket aceptador, 
+// el cual será el canal de comunicación para la recepción de información 
+// y el encoder que utilizará para descifrar la información recibida.
 typedef struct {
 	socket_t self_socket;
     socket_t accept_socket;

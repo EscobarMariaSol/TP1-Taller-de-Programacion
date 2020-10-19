@@ -85,20 +85,50 @@ atributos que se utilizan a lo largo de su vida útil, de esta manera se
 logra abstraer completamente, a los TDAs usuarios, de cómo se realiza el
 cifrado de los mensajes, que de hecho para los encoders, no se trata de 
 mensajes, sino que simplemente se dedican a cifrar bytes.
-    -*Cesar:* La estructura del codificador Cesar cuenta con un único atributo 
+
+1. **Cesar:** La estructura del codificador Cesar cuenta con un único atributo 
     que corresponde a la clave que se utiliza a la hora de codificar un byte.
-    -*Vigenere:* La estructura del codificador Vigenere cuenta con atributos 
+    La interfaz de este cifrador es la siguiente:
+    ```C
+    typedef struct {
+    uint32_t key;
+    }cesar_encoder_t;
+    int cesarEncoderCreate(cesar_encoder_t *encoder, uint32_t key);
+    unsigned char cesarEncoderEncode(cesar_encoder_t *self, unsigned char element);
+    unsigned char cesarEncoderDecode(cesar_encoder_t *self, unsigned char element);
+    ```
+2. **Vigenere:** La estructura del codificador Vigenere cuenta con atributos 
     como la clave (key) y la posición actual de la clave en la que se 
     encuentra (key_pos) de esta manera se puede codificar o decodificar un 
     mensaje completo, llamando al método del encoder las veces que sean 
-    necesarias.
-    -*RC4:* La estructura del codificador RC4 cuenta con atributos como el 
+    necesarias. 
+    Este cifrador cuenta con la siguiente interfaz:
+    ```C
+    typedef struct {
+    char *key;
+    int key_pos;
+    }vigenere_encoder_t;
+    int vigenereEncoderCreate(vigenere_encoder_t *encoder, char *key);
+    unsigned char vigenereEncoderEncode(vigenere_encoder_t *self, 
+    unsigned char vigenereEncoderDecode(vigenere_encoder_t *self, unsigned char element);
+    ```
+3. **RC4:** La estructura del codificador RC4 cuenta con atributos como el 
     arreglo (stream) que se utilizará para realizar la codificación y 
     decodificación y los índices i y j, que corresponden a los indices del 
     stream a utilizar para codificar cada byte, guardando el estado del 
     codificador luego de cada llamado, permitiendo así codificar y decodificar 
     un mensaje de cualquier longitud con multiples llamados.
-
+    Este cifrador cuenta con la siguiente interfaz, que como se puede observar 
+    es la más simple de todas, ya que para codificar y decodificar se utiliza 
+    el mismo método.
+    ```C
+    typedef struct {
+    unsigned char stream[256];
+    uint8_t i, j;
+    }rc4_encoder_t;
+    int rc4EncoderCreate(rc4_encoder_t *encoder, unsigned char *key);
+    unsigned char rc4EncoderEncode(rc4_encoder_t *self, unsigned char element);
+    ```
 
 ### Encoder Handler
 
@@ -113,11 +143,24 @@ cifrado o descifrado, sin necesidad de conocer su contenido o la manera en
 que han sido cifrados, de hecho ni siquiera conocen de la existencia de más 
 de un cifrador, simplemente se comunican con el manejador y este les resuelve 
 su solicitud.
-    -*Encoder Handler:* La estructura del manejador de cifradores cuenta con 
-    atributos como el tipo de cifrador que se utilizará a la hora de realizar 
-    la codificación y decodificación de mensajes además de contar con un 
-    atributo con cada tipo de encoder, en el cual almacenará el encoder 
-    utilizado o NULL en caso de los no utilizados.
+Este TDA posee la siguiente interfaz:
+```C
+typedef struct {
+    cesar_encoder_t cesar_encoder;
+    vigenere_encoder_t vigenere_encoder;
+    rc4_encoder_t rc4_encoder;
+    const char *type;
+}encoder_handler_t;
+int encoderHandlerCreate(encoder_handler_t *handler, const char *type, const char *key);
+array_t *encoderHandlerEncode(encoder_handler_t *self, array_t *message);
+array_t *encoderHandlerDecode(encoder_handler_t *self, array_t *message);
+void encoderHandlerDestroy(encoder_handler_t *self);
+```
+**Encoder Handler:** La estructura del manejador de cifradores cuenta con 
+atributos como el tipo de cifrador que se utilizará a la hora de realizar 
+la codificación y decodificación de mensajes además de contar con un 
+atributo con cada tipo de encoder, en el cual almacenará el encoder 
+utilizado o NULL en caso de los no utilizados.
 
 ### Array
 
@@ -132,9 +175,23 @@ tantos bytes como quieran sin preocuparse de nada más, contando además con
 la posibilidad de consultar su tamaño, sin tener que guardar o recibir ese 
 dato desde el inicio. También nos permite consultar el contenido de cada 
 posición del arreglo, como lo hariamos con un arreglo tradicional.
-    -*Array:* La estructura del array cuenta con atributos como un buffer 
-    que será en el cual se almacenará la información, el tamaño del buffer y 
-    la posición del buffer en la que se encuentra posicionado.
+La interfaz del TDA es la siguiente:
+```C
+typedef struct {
+    unsigned char *buffer;
+    size_t size;
+    uint32_t pos;
+}array_t;
+array_t* arrayCreate(size_t size);
+int arrayAdd(array_t *self, const unsigned char *msg, size_t len);
+unsigned char *arrayGetContent(array_t *self);
+unsigned char arrayGetElement(array_t *self, size_t pos);
+size_t arrayGetSize(array_t *self);
+void arrayDestroy(array_t * self);
+```
+**Array:** La estructura del array cuenta con atributos como un buffer 
+que será en el cual se almacenará la información, el tamaño del buffer y 
+la posición del buffer en la que se encuentra posicionado.
 
 ### Input Output Handler
 
@@ -146,15 +203,26 @@ al Servidor, que son quienes reciben y envian los mensajes. Este TDA se
 encarga de abrir un archivo o la entrada estandar, leer el contenido y 
 almacenarlo en un Array, para luego devolverlo al Cliente, como así también 
 recibe un array desde el Servidor y se encarga de mandarlo a salida estándar.
-    -*IO Handler:* La estructura del manejador de entrada y salida cuenta con 
-    un único atributo correspondiente al file en el cual deberá escribir o 
-    desde el cual deberá leer según corresponda.
+Este TDA cuenta con la siguiente interfaz:
+```C
+typedef struct {
+    FILE *file;
+}io_handler_t;
+int ioHandlerCreate(io_handler_t *handler, const char *path);
+array_t *ioHandlerGetMessage(io_handler_t * self);
+int ioHandlerSetMessage(io_handler_t * self, array_t *message);
+void ioHandlerDestroy(io_handler_t * self);
+```
+**IO Handler:** La estructura del manejador de entrada y salida cuenta con 
+un único atributo correspondiente al file en el cual deberá escribir o 
+desde el cual deberá leer según corresponda.
 
 ### Socket
 
 Para la implementación de los sockets, encargados de establecer la comunicación 
 entre el Cliente y el Servidor, se ha decidido implementar la siguiente 
-interfaz:
+interfaz, tratando de mantener un alto nivel de abstracción entre el usuario 
+y el funcionamiento detrás del socket.
 
 ```C
 typedef struct {
@@ -166,21 +234,86 @@ int socketSend(socket_t* self, const unsigned char* buffer, size_t size);
 int socketRecv(socket_t* self, unsigned char *buffer, size_t size);
 void socketDestroy(socket_t* self);
 ```
--*Socket:* La estructura del socket es muy sencilla, ya que sólo cuenta con
+
+-**Socket:** La estructura del socket es muy sencilla, ya que sólo cuenta con
 un único atributo correspondiente al file descriptor que le es asignado.
--*Socket Create:* Para la creación de un socket, sea cliente o servidor, se 
+
+-**Socket Create:** Para la creación de un socket, sea cliente o servidor, se 
 utiliza una única función, la cual devolverá un socket listo para iniciar 
 la comunicación, abstrayendo así completamente al usuario de tener que 
 acudir a otra función para establecer la conexión.
--*Socket Accept:* En el caso del socket utilizado como Servidor, se utiliza la 
+
+-**Socket Accept:** En el caso del socket utilizado como Servidor, se utiliza la 
 función accept para aceptar un nuevo cliente cuando el servidor esté listo.
--*Socket Send & Recv:* Estas funciones son utilizadas a la hora de enviar y 
+
+-**Socket Send & Recv:** Estas funciones son utilizadas a la hora de enviar y 
 recibir información desde el Cliente y el Servidor.
--*Socket Destroy:* Esta última función se encarga de destruir un socket, la 
+
+-**Socket Destroy:** Esta última función se encarga de destruir un socket, la 
 misma cierra el canal de comunicación establecido por el socket, ya sea para 
 enviar o recibir información, y luego cierra el file descriptor asociado al 
 socket.
 
 ### Client
 
+Para la creación del Cliente se decide proveer la siguiente interfaz, en la 
+cual se refleja la idea de abstraer al programa principal, main, de toda 
+funcionalidad, es por esto que la única responsabilidad que recaé sobre él es 
+realizar un llamado a la función que corre al Cliente.
+
+```C
+typedef struct {
+	socket_t socket;
+	encoder_handler_t encoder;
+}client_t;
+int clientRun(const char *host, const char *port, const char *method, const char *key);
+int clientStart(client_t *client, const char *host, const char *port, const char *method, const char *key);
+int clientSendMessage(client_t *self);
+void clientFinish(client_t *self);
+```
+
+-**Client:** La estructura del cliente cuenta con atributos como el socket, 
+encargado de establecer la comunicación con el servidor, y el encoder, que 
+codificará el mensaje que recibe el cliente para luego enviarse al servidor.
+
+-**Client Run:** Es la función que inicia la ejecución de un cliente, la cual 
+se encargará de crear un cliente, llamando a **clientStart**, recibir un 
+mensaje, enviarlo al servidor a través del llamado a **clientSenMessage** y 
+luego liberar los recursos utilizados llamando a **clientFinish** el cual 
+liberará todos los recursos de manera ordenada y se podrá dar por finalizada 
+la ejecución del programa.
+
 ### Server
+
+Al igual que con el Cliente, aquí se ha buscado abstraer completamente al 
+programa principal, del funcionamiento y la lógica detrás del servidor por 
+lo que se le ha delegado únicamente la función de realizar un llamado al 
+servidor para indicar que debe iniciar su ejecución.
+
+```C
+typedef struct {
+	socket_t self_socket;
+    socket_t accept_socket;
+	encoder_handler_t encoder;
+}server_t;
+int serverRun(const char *port, const char *method, const char *key);
+int serverStart(server_t *server, const char *port, const char *method, const char *key);
+int serverAccept(server_t *server);
+int serverReceiveMessage(server_t *self);
+void serverFinish(server_t *self);
+```
+
+-**Servidor:** La estructura del servidor cuenta con atributos como el 
+socket, desde el cual estará disponible para la conexión con el cliente, 
+el socket aceptador, el cual será el canal de comunicación para la 
+recepción de información y el encoder que utilizará para descifrar la 
+información recibida.
+
+-**Server Run:** Es la función encargada de iniciar la ejecución del servidor, 
+para esto comienza llamando a **serverStart**, la cual creará un nuevo 
+servidor y lo dejará escuchando en el puerto deseado, luego aceptará un 
+cliente haciendo un llamado a **serverAccept**. Una vez se tenga a un cliente 
+conectado se recibirá un mensaje, haciendo uso de la función 
+**serverReceiveMessage** y una vez finalizado este proceso, se llamará a 
+**serverFinish** para liberar todos los recursos utilizados y dar por 
+finalizada la ejecución.
